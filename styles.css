@@ -5,13 +5,22 @@
   font-display: swap;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
+* {
+  font-family: "BrandFont" !important;
+}
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "BrandFont", Arial;
-  background: #f6f7fb;
-  color: #405897;
+  font-family:
+    system-ui,
+    -apple-system,
+    "BrandFont",
+    Arial;
+  background: rgb(244, 246, 250);
+  color: #244f74;
 }
 
 /* حاوية عامة */
@@ -22,8 +31,13 @@ body {
 }
 
 /* الهيدر */
-.header h1 { margin: 0 0 6px; }
-.header p { margin: 0; opacity: .8; }
+.header h1 {
+  margin: 0 0 6px;
+}
+.header p {
+  margin: 0;
+  opacity: 0.8;
+}
 
 /* تقسيم الشاشة */
 .layout {
@@ -36,79 +50,49 @@ body {
 
 /* صندوق التحكم */
 .controls {
-  background: #FFF;
+  background: #fff;
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
 }
 
 /* حقل */
-.field { display: grid; gap: 8px; margin-bottom: 12px; }
-.field span { font-size: 13px; opacity: .8; }
+.field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.field span {
+  font-size: 13px;
+  opacity: 0.8;
+}
 
-input, select, textarea {
+input,
+select,
+textarea {
   padding: 10px 12px;
   border: 1px solid #e5e7ef;
   border-radius: 10px;
   font-size: 14px;
 }
-.select-wrap{
-  position: relative;
-  margin: 10px 0 14px;
-}
-
-#templateSelect{
-  width: 100%;
-  padding: 12px 44px 12px 12px; /* مساحة للسهم */
-  border: 1px solid #E5E7EB;
-  border-radius: 14px;
-  background: #fff;
-  font-size: 16px;
-  color: #111827;
-  outline: none;
-
-  /* إزالة ستايل المتصفح الافتراضي */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  box-shadow: 0 1px 2px rgba(0,0,0,.05);
-}
-
-/* سهم بسيط (مثل دروب داون نظيف) */
-.select-wrap::after{
-  content: "▾";
-  position: absolute;
-  top: 50%;
-  right: 14px;
-  transform: translateY(-50%);
-  color: #6B7280;
-  pointer-events: none;
-  font-size: 18px;
-}
 
 /* تأثير عند الضغط */
-#templateSelect:focus{
-  border-color:#405897;;
-  box-shadow: 0 0 0 4px rgba(64, 88, 151, 0.15);
-}
-#nameInput{
-  height: 52px;      /* نفس ارتفاع البوكسات */
+
+#nameInput {
+  height: 52px;
   padding: 12px;
   border-radius: 14px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #e5e7eb;
   font-size: 16px;
   outline: none;
   resize: none;
-  line-height: 1.2;  /* يخلي سطرين يمسكون داخل نفس الارتفاع */
+  line-height: 1.2; /* يخلي سطرين يمسكون داخل نفس الارتفاع */
 }
 
-
 /* نفس تأثير القالب عند الضغط */
-#nameInput:focus{
-  border-color: #405897;
-  box-shadow: 0 0 0 4px rgba(64, 88, 151, 0.15);
-
+#nameInput:focus {
+  border-color: #c63d63;
+  box-shadow: 0 0 0 4px rgba(198, 61, 99, 0.15);
 }
 /* أزرار */
 .btn {
@@ -122,13 +106,13 @@ input, select, textarea {
 }
 
 .btn.primary {
-  background: #405897;;
+  background: #f26d21;
   color: #fff;
 }
 
 .btn.secondary {
   background: #fff;
-  color: #405897;
+  color: #f26d21;
   border: 1px solid #e5e7ef;
 }
 
@@ -136,26 +120,25 @@ input, select, textarea {
 .status {
   display: block;
   margin-top: 10px;
-  opacity: .7;
+  opacity: 0.7;
   line-height: 1.4;
 }
 
 /* المعاينة */
 .preview {
-  
   background: #fff;
   border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
 }
 
 canvas {
-  width: 100%;      /* عرض معاينة مناسب */
-  height: auto;     /* يحافظ على النسبة */
+  width: 100%; /* عرض معاينة مناسب */
+  height: auto; /* يحافظ على النسبة */
   border-radius: 10px;
   display: block;
 }
-/* ✅ Mobile Portrait (phones) */
+/*  Mobile Portrait (phones) */
 @media (max-width: 700px) {
   body {
     background: #f6f7fb;
@@ -172,19 +155,26 @@ canvas {
   }
 
   /* خلي المعاينة أولاً */
-  .preview { order: 1; padding: 12px; }
-  .controls { order: 2; padding: 14px; }
+  .preview {
+    order: 1;
+    padding: 12px;
+  }
+  .controls {
+    order: 2;
+    padding: 14px;
+  }
 
   /* المعاينة تكون كبيرة لكن بدون ما تسبب سكرول مزعج */
   canvas {
     width: 100%;
     height: auto;
-    max-height: 70vh;   /* أهم سطر: مناسب للجوال بالطول */
+    max-height: 70vh; /* أهم سطر: مناسب للجوال بالطول */
   }
 
   /* تكبير عناصر الإدخال للّمس */
-  input, select {
-    font-size: 16px;    /* يمنع زوم تلقائي في iPhone */
+  input,
+  select {
+    font-size: 16px; /* يمنع زوم تلقائي في iPhone */
     padding: 12px 12px;
   }
 
@@ -193,51 +183,55 @@ canvas {
     font-size: 16px;
   }
 }
-html, body{
-  background: #ffff !important;
+html,
+body {
+  background: #fbfaee !important;
 }
 /* لفّ المعايدة */
-.card-wrap{
+.card-wrap {
   position: relative;
 }
 
-.header-row{
+.header-row {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: -2px;
 }
 
-.header-logo{
-  width: 90px;     /*كبّر/صغّري */
+.header-logo {
+  width: 130px;
   height: auto;
   flex: 0 0 auto;
   margin-inline: auto;
-
-
-
-  
 }
 
-.header-text h1{ margin: 0 0 6px; }
-.header-text p{ margin: 0; opacity: .8; }
-
+.header-text h1 {
+  margin: 0 0 6px;
+}
+.header-text p {
+  margin: 0;
+  opacity: 0.8;
+}
 
 /* لو ضاقت الشاشة، ينزلون تحت بعض بدون تداخل */
-@media (max-width: 700px){
-  .header-row{ flex-direction: column; align-items: flex-start; }
+@media (max-width: 700px) {
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
-.social-row{
+.social-row {
   display: flex;
   gap: 10px;
   justify-content: center;
   margin-top: 12px;
 }
 
-.social-row a{
+.social-row a {
   width: 28px;
   height: 28px;
-  border: 1px solid #405897;
+  border: 1px solid #244f74;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -245,7 +239,7 @@ html, body{
   color: #405897;
 }
 
-.social-row svg{
+.social-row svg {
   width: 14px;
   height: 14px;
   fill: none;
@@ -257,7 +251,6 @@ html, body{
   text-align: center;
   padding: 20px 0;
   font-size: 10px;
-  color: #405897;
+  color: #244f74;
   opacity: 0.8;
 }
-

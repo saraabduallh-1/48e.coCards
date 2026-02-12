@@ -1,5 +1,5 @@
 /*************************************************
-  Greeting Link - Single Template + Name Generator
+  Greeting Link - Simple Template + Name Generator
   Tech: Vanilla JS + Canvas
   Output: Download PNG (client-side)
 **************************************************/
@@ -8,292 +8,287 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+const templateSelect = document.getElementById("templateSelect");
 const nameInput = document.getElementById("nameInput");
-const alignSelect = document.getElementById("alignSelect"); // إذا موجودة
+//  عرض قالب افتراضي أول ما تفتح الصفحة
+const defaultTemplateKey = templateSelect.value;
+
+
+loadTemplate(defaultTemplateKey).then(() => {
+  // ضبط مقاس الكانفس على مقاس القالب
+  canvas.width  = TEMPLATES[defaultTemplateKey].width;
+  canvas.height = TEMPLATES[defaultTemplateKey].height;
+
+  // ارسم البطاقة (اكتب اسمك/أو الاسم الحالي)
+  draw(nameInput.value || "اكتب اسمك");
+});
 const downloadBtn = document.getElementById("downloadBtn");
 const copyLinkBtn = document.getElementById("copyLinkBtn");
 const statusEl = document.getElementById("status");
 
-// ====== 2) إعدادات قالب واحد (تحكم كامل بالمكان + اللون + الخط) ======
+// ====== 2) إعدادات القوالب  ======
+// x,y = مكان الاسم في القالب
+// maxWidth = أقصى عرض للاسم (إذا زاد يصغّر حجم الخط تلقائيًا)
+// baseFontSize = حجم الخط الافتراضي قبل التصغير
+// color = لون الاسم
+const TEMPLATES = {
+  template1: {
+    src: "./assets/1.png",
+    width: 1080,
+    height: 1350,
+    textBox: { x: 540, y: 1000, maxWidth: 820 },
+    baseFontSize: 30,
+    color: "#ffff"
+  },
+  template2: {
+    src: "./assets/2.png",
+    width: 1080,
+    height: 1350,
+    textBox: { x: 540, y: 1050, maxWidth: 820 },
+    baseFontSize: 30,
+    color: "#44656C"
+  },
 
-const TEMPLATE = {
-  // صورة واحدة ثابتة
-  src: "./assets/card.png",
+  template3: {
+    src: "./assets/3.png",
+    width: 1080,
+    height: 1350,
+    textBox: { x: 540, y: 1050, maxWidth: 820 },
+    baseFontSize: 30,
+    color: "#3865C1"
+  },
 
-  // مقاس الكانفس (لازم يطابق مقاس القالب عشان الإحداثيات تضبط)
-  width: 1080,
-  height: 1350,
-
-  // مكان الاسم
-  x: 540,
-  y: 820,
-
-  // أقصى عرض للاسم (إذا زاد يصغر الخط تلقائيًا)
-  maxWidth: 820,
-
-  // إعدادات الخط
-  fontFamily: "BrandFont",
-  fontWeight: 700,
-  baseFontSize: 30,
-  color: "#F26D21",
-
-  allowTwoLines: true,
-  lineHeight: 50, // المسافة بين السطرين
+  template4: {
+    src: "./assets/4.png",
+    width: 1080,
+    height: 1350,
+    textBox: { x: 540, y: 840, maxWidth: 820 },
+    baseFontSize: 30,
+    color: "#4286C3",
+    lineHeight: .5
+  }
 };
-
 // ====== 3) تحميل صورة القالب ======
 let bgImage = null;
 
-function loadTemplateImage() {
+/**
+ * يحمل صورة القالب المختار ويخزنها في bgImage
+ */
+function loadTemplate(templateKey) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       bgImage = img;
       resolve();
     };
-    img.onerror = () => reject(new Error("Template image failed to load."));
-    img.src = TEMPLATE.src;
+    img.onerror = () => reject(new Error("Failed to load template image"));
+    img.src = TEMPLATES[templateKey].src;
   });
 }
 
 // ====== 4) أدوات مساعدة ======
-function safeText(t) {
-  return (t || "").toString().trim().slice(0, 80);
-}
 
+/**
+ * يحدد هل النص عربي (لضبط اتجاه الكتابة)
+ */
 function isArabic(text) {
   return /[\u0600-\u06FF]/.test(text);
 }
 
-function getAlign() {
-  if (!alignSelect) return "center";
-  const v = (alignSelect.value || "center").toLowerCase();
-  if (v === "left" || v === "right" || v === "center") return v;
-  return "center";
-}
-
-function fitFontSize(lines, maxWidth, baseSize, fontFamily, fontWeight) {
-  // نختار أطول سطر ونصغّر عليه
-  const longest = lines.reduce((a, b) => (a.length >= b.length ? a : b), "");
+/**
+ * يصغر حجم الخط تلقائيًا إذا الاسم طويل ويطلع خارج المساحة
+ */
+function fitFontSize(text, maxWidth, baseSize, fontFamily) {
   let size = baseSize;
+  ctx.font = `700 ${size}px ${fontFamily}`;
 
-  ctx.font = `${fontWeight} ${size}px ${fontFamily}`;
-  while (ctx.measureText(longest).width > maxWidth && size > 18) {
+  while (ctx.measureText(text).width > maxWidth && size > 18) {
     size -= 2;
-    ctx.font = `${fontWeight} ${size}px ${fontFamily}`;
+    ctx.font = `700 ${size}px ${fontFamily}`;
   }
   return size;
 }
 
+/**
+ * يقرأ باراميترات الرابط (t, name, align)
+ * مثال:
+ * ?t=template1&name=نورة&align=center
+ */
 function getUrlParams() {
   const p = new URLSearchParams(window.location.search);
-  return { name: p.get("name") || "" };
+  return {
+    t: p.get("t"),
+    name: p.get("name"),
+    align: p.get("align"),
+  };
 }
 
-function updateUrlParams({ name }) {
-  // هذا يخلي رابطك يفتح الاسم تلقائيًا إذا أحد شاركه
+/**
+ * يحدث الرابط بدون إعادة تحميل الصفحة (لإنشاء "رابط ذكي")
+ */
+function updateUrlParams({ t, name, align }) {
   const p = new URLSearchParams();
+  if (t) p.set("t", t);
   if (name) p.set("name", name);
-  const qs = p.toString();
-  const newUrl = qs
-    ? `${window.location.pathname}?${qs}`
-    : window.location.pathname;
+  if (align) p.set("align", align);
+
+  const newUrl = `${window.location.pathname}?${p.toString()}`
   window.history.replaceState({}, "", newUrl);
 }
 
-async function ensureFontLoaded() {
-  // مهم جدًا عشان Canvas يستخدم الخط اللي في CSS
-  // إذا ما انتظرنا، أحيانًا يرسم Arial
-  if (!document.fonts) return;
-  try {
-    await document.fonts.load(
-      `${TEMPLATE.fontWeight} 32px ${TEMPLATE.fontFamily}`,
-    );
-    await document.fonts.ready;
-  } catch (e) {
-    // لو فشل التحميل، يكمل عادي
-  }
+/**
+ * تنظيف الاسم قبل وضعه في الرابط (طول + فراغات)
+ */
+function safeName(name) {
+  return (name || "").trim().slice(0, 50);
 }
 
-// ====== 5) الرسم ======
+function resizeCanvas(templateKey) {
+  const cfg = TEMPLATES[templateKey];
+  canvas.width = cfg.width;
+  canvas.height = cfg.height;
+}
+
+// ====== 5) الرسم على الـCanvas ======
+/**
+ * يرسم: القالب + الاسم (لو موجود)
+ */
 function draw() {
-  if (!bgImage) return;
+  const key = templateSelect.value;
+  const cfg = TEMPLATES[key];
 
-  // ارسم الخلفية
+  // امسح اللوحة
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
-  const rawName = safeText(nameInput?.value);
-  if (!rawName) return;
-
-  // تقسيم لسطرين إذا allowTwoLines = true
-  let lines = [rawName];
-  if (TEMPLATE.allowTwoLines) {
-    lines = rawName
-      .split("\n")
-      .map((s) => safeText(s).trim())
-      .filter(Boolean)
-      .slice(0, 2);
-
-    if (lines.length === 0) return;
+  // ارسم الخلفية (القالب)
+  if (bgImage) {
+    ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
   }
 
-  // إعداد المحاذاة
-  const align = getAlign();
+  // خذ الاسم
+  const name = safeName(nameInput.value);
+  if (!name) return; // إذا فاضي، لا ترسم اسم
 
-  if (align === "left") ctx.textAlign = "left";
-  else if (align === "right") ctx.textAlign = "right";
-  else ctx.textAlign = "center";
+  // اتجاه النص: عربي = RTL / إنجليزي = LTR
+  const rtl = isArabic(name);
+  ctx.direction = rtl ? "rtl" : "ltr";
 
+  // محاذاة النص
+  ctx.textAlign = "center"; // center/
   ctx.textBaseline = "middle";
-  ctx.fillStyle = TEMPLATE.color;
 
-  // ظل
-  if (TEMPLATE.shadow?.enabled) {
-    ctx.shadowColor = TEMPLATE.shadow.color;
-    ctx.shadowBlur = TEMPLATE.shadow.blur;
-    ctx.shadowOffsetX = TEMPLATE.shadow.offsetX;
-    ctx.shadowOffsetY = TEMPLATE.shadow.offsetY;
-  } else {
-    ctx.shadowColor = "transparent";
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-  }
+  // لون النص
+  ctx.fillStyle = cfg.color;
 
-  // حجم الخط مع تصغير تلقائي
-  const fontSize = fitFontSize(
-    lines,
-    TEMPLATE.maxWidth,
-    TEMPLATE.baseFontSize,
-    TEMPLATE.fontFamily,
-    TEMPLATE.fontWeight
-  );
-  ctx.font = `${TEMPLATE.fontWeight} ${fontSize}px ${TEMPLATE.fontFamily}`;
+  // اختار الخط
+  const fontFamily = `"BrandFont", Arial`;
 
-  // تحديد نقطة الرسم حسب المحاذاة
-  let drawX = TEMPLATE.x;
-  if (align === "left") drawX = TEMPLATE.x - TEMPLATE.maxWidth / 2;
-  if (align === "right") drawX = TEMPLATE.x + TEMPLATE.maxWidth / 2;
+  // صغر الخط لو الاسم طويل
+  const fontSize = fitFontSize(name, cfg.textBox.maxWidth, cfg.baseFontSize, fontFamily);
+  ctx.font = `700 ${fontSize}px ${fontFamily}`;
 
-  // lineHeight: استخدمي الموجود بالقالب أو احسبيه من حجم الخط
-  const lineHeight = TEMPLATE.lineHeight || Math.round(fontSize * 1.25);
+  // (اختياري) ظل خفيف يساعد القراءة على خلفية مزدحمة
+   ctx.shadowBlur = 6;
+  ctx.shadowOffsetY = 2;
+  
 
-  // رسم الاسم (مهم: direction قبل كل fillText)
-  if (lines.length === 1) {
-    const l0 = lines[0];
-    ctx.direction = isArabic(l0) ? "rtl" : "ltr";
-    ctx.fillText(l0, drawX, TEMPLATE.y);
-  } else {
-    const y1 = TEMPLATE.y - lineHeight / 2;
-    const y2 = TEMPLATE.y + lineHeight / 2;
+  // ارسم الاسم
 
-    const l0 = lines[0];
-    const l1 = lines[1];
+const lines = name.split("\n"); // يفصل السطور
 
-    ctx.direction = isArabic(l0) ? "rtl" : "ltr";
-    ctx.fillText(l0, drawX, y1);
+const lineHeight = 60; // المسافة بين السطرين (عدّليها حسب القالب)
 
-    ctx.direction = isArabic(l1) ? "rtl" : "ltr";
-    ctx.fillText(l1, drawX, y2);
-  }
+lines.slice(0, 2).forEach((line, index) => {
+  ctx.fillText(line.trim(), cfg.textBox.x, cfg.textBox.y + (index * lineHeight));
+});
+
+
 }
+// ====== 6) تحميل  ======
 
-
-// ====== 6) تحميل PNG ======
-downloadBtn?.addEventListener("click", async () => {
-  const name = safeText(nameInput?.value);
+downloadBtn.addEventListener("click", async () => {
+  const name = safeName(nameInput.value);
   if (!name) {
     alert("اكتب الاسم أولاً.");
     return;
   }
 
-  // نرسم آخر نسخة
-  draw();
-
-  const blob = await new Promise((resolve) =>
-    canvas.toBlob(resolve, "image/png", 1),
-  );
+  const blob = await new Promise(r => canvas.toBlob(r, "image/png", 1));
   if (!blob) return;
 
-  const file = new File([blob], "تهنئة.png", { type: "image/png" });
+  const file = new File([blob], "التهنئة.png", { type: "image/png" });
 
-  // مشاركة إذا متاحة
- // مشاركة إذا المتصفح يدعم مشاركة ملفات
-if (navigator.canShare && navigator.canShare({ files: [file] })) {
-  try {
-    await navigator.share({
-      files: [file],
-      title: "تهنئة",
-    });
-    return;
-  } catch (e) {
-    console.log("Share cancelled");
+  //  أولاً: افتح الشير 
+  if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: "تهنئة",
+      });
+      return;
+    } catch (e) {}
   }
-}
 
-  // تنزيل عادي
+  //  إذا ما يدعم الشير → تحميل عادي
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "تهنئة.png";
-
-  document.body.appendChild(a);
+  a.download = "التهنئة.png";
   a.click();
-  a.remove();
   URL.revokeObjectURL(url);
 });
 
-// ====== 7) نسخ الرابط ======
-copyLinkBtn?.addEventListener("click", async () => {
+
+// ====== 7) نسخ رابط ذكي ======
+/**
+ * ينسخ رابط يحتوي على القالب + الاسم + المحاذاة
+ * يقدر العميل يفتحه وتجيه نفس الإعدادات
+ */
+async function copySmartLink() {
+  const fixedUrl = "https://enzozid-cards2026.vercel.app/";
+
   try {
-    // إ ينسخ الرابط مع الاسم تلقائيًا:
-    // const link = window.location.href;
-
-    //و ينسخ الرابط الأساسين ?name=
-    const link = `${window.location.origin}${window.location.pathname}`;
-
-    await navigator.clipboard.writeText(link);
-    if (statusEl) statusEl.textContent = "تم نسخ الرابط ";
-  } catch (e) {
-    if (statusEl) statusEl.textContent = " انسخ الرابط يدويًا";
+    await navigator.clipboard.writeText(fixedUrl);
+    statusEl.textContent = " تم نسخ الرابط";
+  } catch {
+    statusEl.textContent = "انسخ الرابط يدويًا من شريط العنوان بالأعلى";
   }
-});
+}
 
-// ====== 8) أحداث الإدخال ======
-nameInput?.addEventListener("input", () => {
-  //  يمنع أكثر من سطرين
-  const v = (nameInput.value || "").replace(/\r\n/g, "\n");
-  const lines = v.split("\n");
-  if (lines.length > 2) {
-    nameInput.value = lines.slice(0, 2).join("\n");
-  }
 
+// ====== 8) مزامنة الرابط مع أي تغيير ======
+function syncUrl() {
+  updateUrlParams({
+    t: templateSelect.value,
+    name: safeName(nameInput.value),
+    align: "center"
+  });
+}
+
+
+
+// ====== 10) أحداث المستخدم (Event Listeners) ======
+templateSelect.addEventListener("change", async () => {
+  resizeCanvas(templateSelect.value);
+  await loadTemplate(templateSelect.value);
   draw();
-  updateUrlParams({ name: safeText(nameInput.value) });
+  syncUrl();
 });
 
-alignSelect?.addEventListener("change", () => {
+nameInput.addEventListener("input", () => {
   draw();
+  syncUrl();
 });
 
-// ====== 9) تشغيل أولي ======
+;
+
+
+copyLinkBtn.addEventListener("click", copySmartLink);
+
+
 (async () => {
-  // جهز الكانفس
-  canvas.width = TEMPLATE.width;
-  canvas.height = TEMPLATE.height;
-
-  // حمّل الصورة
-  await loadTemplateImage();
-
-  // انتظر الخط
-  await ensureFontLoaded();
-
-  // لو فيه name في الرابط
-  const { name } = getUrlParams();
-  if (name && nameInput) nameInput.value = name;
-
-  // ارسم
+  resizeCanvas(templateSelect.value);
+  await loadTemplate(templateSelect.value);
   draw();
-  updateUrlParams({ name: safeText(nameInput?.value) });
+  syncUrl();
 })();
