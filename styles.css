@@ -11,7 +11,7 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, "BrandFont", Arial;
   background: #f6f7fb;
-  color: #244F74;
+  color: #405897;
 }
 
 /* حاوية عامة */
@@ -52,15 +52,48 @@ input, select, textarea {
   border-radius: 10px;
   font-size: 14px;
 }
+.select-wrap{
+  position: relative;
+  margin: 10px 0 14px;
+}
 
+#templateSelect{
+  width: 100%;
+  padding: 12px 44px 12px 12px; /* مساحة للسهم */
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  background: #fff;
+  font-size: 16px;
+  color: #111827;
+  outline: none;
 
+  /* إزالة ستايل المتصفح الافتراضي */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
 
+/* سهم بسيط (مثل دروب داون نظيف) */
+.select-wrap::after{
+  content: "▾";
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: #6B7280;
+  pointer-events: none;
+  font-size: 18px;
+}
 
 /* تأثير عند الضغط */
-
+#templateSelect:focus{
+  border-color:#405897;;
+  box-shadow: 0 0 0 4px rgba(64, 88, 151, 0.15);
+}
 #nameInput{
-  height: 52px;    
+  height: 52px;      /* نفس ارتفاع البوكسات */
   padding: 12px;
   border-radius: 14px;
   border: 1px solid #E5E7EB;
@@ -73,9 +106,8 @@ input, select, textarea {
 
 /* نفس تأثير القالب عند الضغط */
 #nameInput:focus{
-  border-color: #C63D63;
-box-shadow: 0 0 0 4px rgba(198, 61, 99, 0.15);
-
+  border-color: #405897;
+  box-shadow: 0 0 0 4px rgba(64, 88, 151, 0.15);
 
 }
 /* أزرار */
@@ -90,13 +122,13 @@ box-shadow: 0 0 0 4px rgba(198, 61, 99, 0.15);
 }
 
 .btn.primary {
-  background: #C63D63;
+  background: #405897;;
   color: #fff;
 }
 
 .btn.secondary {
   background: #fff;
-  color: #C63D63;
+  color: #405897;
   border: 1px solid #e5e7ef;
 }
 
@@ -123,7 +155,7 @@ canvas {
   border-radius: 10px;
   display: block;
 }
-/*  Mobile Portrait (phones) */
+/* ✅ Mobile Portrait (phones) */
 @media (max-width: 700px) {
   body {
     background: #f6f7fb;
@@ -176,10 +208,12 @@ html, body{
 }
 
 .header-logo{
-  width: 90px;     
+  width: 90px;     /*كبّر/صغّري */
   height: auto;
   flex: 0 0 auto;
   margin-inline: auto;
+
+
 
   
 }
@@ -203,7 +237,7 @@ html, body{
 .social-row a{
   width: 28px;
   height: 28px;
-  border: 1px solid #244F74;;
+  border: 1px solid #405897;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -223,7 +257,7 @@ html, body{
   text-align: center;
   padding: 20px 0;
   font-size: 10px;
-  color: #C63D63; 
+  color: #405897;
   opacity: 0.8;
 }
 
