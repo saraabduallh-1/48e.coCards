@@ -126,22 +126,20 @@ function draw() {
   const rawName = safeText(nameInput?.value);
   if (!rawName) return;
 
-  const rtl = isArabic(rawName);
-
   // تقسيم لسطرين إذا allowTwoLines = true
   let lines = [rawName];
   if (TEMPLATE.allowTwoLines) {
     lines = rawName
       .split("\n")
-      .map((s) => s.trim())
+      .map((s) => safeText(s).trim())
       .filter(Boolean)
       .slice(0, 2);
+
     if (lines.length === 0) return;
   }
 
-  // إعداد الاتجاه والمحاذاة
+  // إعداد المحاذاة
   const align = getAlign();
-  ctx.direction = rtl ? "rtl" : "ltr";
 
   if (align === "left") ctx.textAlign = "left";
   else if (align === "right") ctx.textAlign = "right";
@@ -169,7 +167,7 @@ function draw() {
     TEMPLATE.maxWidth,
     TEMPLATE.baseFontSize,
     TEMPLATE.fontFamily,
-    TEMPLATE.fontWeight,
+    TEMPLATE.fontWeight
   );
   ctx.font = `${TEMPLATE.fontWeight} ${fontSize}px ${TEMPLATE.fontFamily}`;
 
@@ -178,17 +176,29 @@ function draw() {
   if (align === "left") drawX = TEMPLATE.x - TEMPLATE.maxWidth / 2;
   if (align === "right") drawX = TEMPLATE.x + TEMPLATE.maxWidth / 2;
 
-  // لو سطرين: نخليهم حول y
+  // lineHeight: استخدمي الموجود بالقالب أو احسبيه من حجم الخط
+  const lineHeight = TEMPLATE.lineHeight || Math.round(fontSize * 1.25);
+
+  // رسم الاسم (مهم: direction قبل كل fillText)
   if (lines.length === 1) {
-    ctx.fillText(lines[0], drawX, TEMPLATE.y);
+    const l0 = lines[0];
+    ctx.direction = isArabic(l0) ? "rtl" : "ltr";
+    ctx.fillText(l0, drawX, TEMPLATE.y);
   } else {
-    const totalHeight = TEMPLATE.lineHeight; // بين سطرين
-    const y1 = TEMPLATE.y - totalHeight / 2;
-    const y2 = TEMPLATE.y + totalHeight / 2;
-    ctx.fillText(lines[0], drawX, y1);
-    ctx.fillText(lines[1], drawX, y2);
+    const y1 = TEMPLATE.y - lineHeight / 2;
+    const y2 = TEMPLATE.y + lineHeight / 2;
+
+    const l0 = lines[0];
+    const l1 = lines[1];
+
+    ctx.direction = isArabic(l0) ? "rtl" : "ltr";
+    ctx.fillText(l0, drawX, y1);
+
+    ctx.direction = isArabic(l1) ? "rtl" : "ltr";
+    ctx.fillText(l1, drawX, y2);
   }
 }
+
 
 // ====== 6) تحميل PNG ======
 downloadBtn?.addEventListener("click", async () => {
