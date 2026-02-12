@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>تهنئة رمضان 1447</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <main class="container">
+      <!-- Header: عنوان بسيط -->
+
+      <header class="header">
+        <div class="header-row">
+          <img src="./assets/logo.png" class="header-logo" alt="logo" />
+          <div class="header-text">
+            <h1>تهنئة رمضان 1447</h1>
+            <p>صمّم تهنئتك بنفسك - أضِف أسمك، ثم حمّلها</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="layout">
+        <!-- Controls: هنا كل عناصر التحكم -->
+        <aside class="controls">
+          <!-- إدخال الاسم -->
+          <label class="field">
+            <span>أضِف أسمك</span>
+            <textarea
+              id="nameInput"
+              placeholder="مثال: فيصل / faisal"
+              rows="2"
+              maxlength="50"
+            ></textarea>
+          </label>
+
+          <!-- زر تحميل PNG -->
+          <button id="downloadBtn" class="btn primary">
+            تحميل التهنئة PNG
+          </button>
+
+          <!-- زر نسخ رابط ذكي -->
+          <button id="copyLinkBtn" class="btn secondary">
+            مشاركة رابط التهنئة
+          </button>
+          <br />
+          <br />
+          <!-- رسالة صغيرة للعميل -->
+          <center>
+            <small id="status" class="status"></small>
+          </center>
+        </aside>
+
+        <!-- Preview: معاينة القالب والاسم -->
+        <div class="preview">
+          <!-- Canvas: مساحة الرسم (نفس مقاس القالب 1080×1920) -->
+          <canvas id="canvas" width="1080" height="1920"></canvas>
+        </div>
+      </section>
+    </main>
+    <div class="social-row">
+      <!-- Instagram -->
+      <a
+        href="https://www.instagram.com/48e.co?igsh=ZndraHZkbWNuMG9x"
+        target="_blank"
+        aria-label="Instagram"
+      >
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="5" />
+          <circle cx="12" cy="12" r="4" />
+        </svg>
+      </a>
+
+      <!-- Website -->
+      <a href="https://48e.co" target="_blank" aria-label="Website">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="200"
+          height="200"
+          viewBox="0 0 48 48"
+          fill="#000000"
+        >
+          <g fill="none" stroke="currentColor" stroke-width="3">
+            <path
+              stroke-linejoin="round"
+              d="M3 24a21 21 0 1 0 42 0a21 21 0 1 0-42 0"
+            />
+            <path
+              stroke-linejoin="round"
+              d="M15 24a9 21 0 1 1 18 0a9 21 0 1 1-18 0"
+            />
+            <path stroke-linecap="round" d="M4.5 31h39m-39-14h39" />
+          </g>
+        </svg>
+      </a>
+
+      
+    </div>
+    <br />
+    <script src="./app.js"></script>
+  </body>
+
+  <footer class="site-footer">© 2026</footer>
+</html>

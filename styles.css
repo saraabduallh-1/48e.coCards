@@ -1,0 +1,229 @@
+/* تحميل خطك الخاص (يدعم عربي/إنجليزي) */
+@font-face {
+  font-family: "BrandFont";
+  src: url("./assets/font.ttf") format("truetype");
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "BrandFont", Arial;
+  background: #f6f7fb;
+  color: #244F74;
+}
+
+/* حاوية عامة */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* الهيدر */
+.header h1 { margin: 0 0 6px; }
+.header p { margin: 0; opacity: .8; }
+
+/* تقسيم الشاشة */
+.layout {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+/* صندوق التحكم */
+.controls {
+  background: #FFF;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+
+/* حقل */
+.field { display: grid; gap: 8px; margin-bottom: 12px; }
+.field span { font-size: 13px; opacity: .8; }
+
+input, select, textarea {
+  padding: 10px 12px;
+  border: 1px solid #e5e7ef;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+
+
+
+
+/* تأثير عند الضغط */
+
+#nameInput{
+  height: 52px;    
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid #E5E7EB;
+  font-size: 16px;
+  outline: none;
+  resize: none;
+  line-height: 1.2;  /* يخلي سطرين يمسكون داخل نفس الارتفاع */
+}
+
+
+/* نفس تأثير القالب عند الضغط */
+#nameInput:focus{
+  border-color: #C63D63;
+box-shadow: 0 0 0 4px rgba(198, 61, 99, 0.15);
+
+
+}
+/* أزرار */
+.btn {
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.btn.primary {
+  background: #C63D63;
+  color: #fff;
+}
+
+.btn.secondary {
+  background: #fff;
+  color: #C63D63;
+  border: 1px solid #e5e7ef;
+}
+
+/* نص الحالة */
+.status {
+  display: block;
+  margin-top: 10px;
+  opacity: .7;
+  line-height: 1.4;
+}
+
+/* المعاينة */
+.preview {
+  
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+
+canvas {
+  width: 100%;      /* عرض معاينة مناسب */
+  height: auto;     /* يحافظ على النسبة */
+  border-radius: 10px;
+  display: block;
+}
+/*  Mobile Portrait (phones) */
+@media (max-width: 700px) {
+  body {
+    background: #f6f7fb;
+  }
+
+  .container {
+    padding: 14px;
+  }
+
+  /* من عمودين إلى عمود واحد */
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* خلي المعاينة أولاً */
+  .preview { order: 1; padding: 12px; }
+  .controls { order: 2; padding: 14px; }
+
+  /* المعاينة تكون كبيرة لكن بدون ما تسبب سكرول مزعج */
+  canvas {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;   /* أهم سطر: مناسب للجوال بالطول */
+  }
+
+  /* تكبير عناصر الإدخال للّمس */
+  input, select {
+    font-size: 16px;    /* يمنع زوم تلقائي في iPhone */
+    padding: 12px 12px;
+  }
+
+  .btn {
+    padding: 14px 14px;
+    font-size: 16px;
+  }
+}
+html, body{
+  background: #ffff !important;
+}
+/* لفّ المعايدة */
+.card-wrap{
+  position: relative;
+}
+
+.header-row{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-logo{
+  width: 90px;     
+  height: auto;
+  flex: 0 0 auto;
+  margin-inline: auto;
+
+  
+}
+
+.header-text h1{ margin: 0 0 6px; }
+.header-text p{ margin: 0; opacity: .8; }
+
+
+/* لو ضاقت الشاشة، ينزلون تحت بعض بدون تداخل */
+@media (max-width: 700px){
+  .header-row{ flex-direction: column; align-items: flex-start; }
+}
+
+.social-row{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.social-row a{
+  width: 28px;
+  height: 28px;
+  border: 1px solid #244F74;;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #405897;
+}
+
+.social-row svg{
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 10px;
+  color: #C63D63; 
+  opacity: 0.8;
+}
+
